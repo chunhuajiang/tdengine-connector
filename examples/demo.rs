@@ -2,13 +2,13 @@ use std::process;
 use tdengine::Tdengine;
 
 fn main() {
-    let tde = Tdengine::new("127.0.0.1", "root", "taosdata", "", 0).unwrap_or_else(|err| {
+    let tde = Tdengine::new("127.0.0.1", "root", "taosdata", "demo", 0).unwrap_or_else(|err| {
         eprintln!("Can't create Tdengine: {}", err);
         process::exit(1)
     });
 
-    tde.query("drop database demo");
-    tde.query("create database demo");
+//    tde.query("drop database demo");
+//    tde.query("create database demo");
     tde.query("use demo");
     tde.query("create table m1 (ts timestamp, speed int)");
 
