@@ -2,17 +2,8 @@
 mod bindings;
 use bindings::*;
 
-use std::os::raw::c_void;
-use std::os::raw::c_char;
-use std::os::raw::c_int;
-use std::ffi::CString;
-use std::ffi::CStr;
-
-use std::mem;
-
-extern crate c_vec;
-
-use c_vec::{CVec, CSlice};
+use std::os::raw::{c_void, c_char, c_int};
+use std::ffi::{CString, CStr};
 
 pub enum Field {
     tinyInt(i8),
@@ -26,7 +17,7 @@ pub enum Field {
     boolType(bool),
 }
 
-type Fields = Vec<Field>;
+pub type Fields = Vec<Field>;
 pub type Row = Vec<Fields>;
 
 pub fn str_into_raw(s: &str) -> *mut c_char {

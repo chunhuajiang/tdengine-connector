@@ -65,22 +65,50 @@ impl Subscriber {
     pub fn consume(self: &Subscriber) {
         unsafe {
             let taosRow = taos_consume(self.tsub);
-            self.raw_into_row(taosRow as *mut c_void);
+            if taosRow.is_null() {
+                panic!("taos_consume error");
+            }
+            self.raw_into_row(taosRow);
         }
     }
 
-    pub fn raw_into_row(self: &Subscriber, row: *mut c_void) {
-        let rows: Row = Vec::new();
+    pub fn raw_into_row(self: &Subscriber, row: *mut *mut c_void) {
+        // let rows: Vec<Fields> = Vec::new();
         let fields = raw_into_field(self.fields, self.fcount);
 
-        for (index, field) in fields.iter().enumerate() {
-            println!("index: {}, type: {}, bytes: {}", index, field.type_, field.bytes);
-            match field.type_ {
-                // TSDB_DATA_TYPE_BOOL => Row.push()
+        for (i, field) in fields.iter().enumerate() {
+            print!("index: {}, type: {}, bytes: {}", i, field.type_, field.bytes);
+            match field.type_ as u32 {
+                TSDB_DATA_TYPE_TINYINT => {
+                    println!("{} ", unsafe {*(row.offset(i as isize) as *mut i8)});
+                }
+                TSDB_DATA_TYPE_SMALLINT => {
+                    println!("{} ", unsafe {*(row.offset(i as isize) as *mut i16)});
+                }
+                TSDB_DATA_TYPE_INT => {
+                    println!("{} ", unsafe {*(row.offset(i as isize) as *mut u32)});
+                }
+                TSDB_DATA_TYPE_BIGINT => {
+                    println!("{} ", unsafe {*(row.offset(i as isize) as *mut i64)});
+                }
+                TSDB_DATA_TYPE_FLOAT => {
+                    println!("{} ", unsafe {*(row.offset(i as isize) as *mut f32)});
+                }
+                TSDB_DATA_TYPE_DOUBLE => {
+                    println!("{} ", unsafe {*(row.offset(i as isize) as *mut f64)});
+                }
+                TSDB_DATA_TYPE_BINARY | TSDB_DATA_TYPE_NCHAR => {
+                    // TODO
+                    println!("{} ", unsafe {*(row.offset(i as isize) as *mut i8)});
+                }
+                TSDB_DATA_TYPE_TIMESTAMP => {
+                    println!("{} ", unsafe {*(row.offset(i as isize) as *mut i64)});
+                }
+                TSDB_DATA_TYPE_BOOL => {
+                    println!("{} ", unsafe {*(row.offset(i as isize) as *mut i8)});
+                }
                 _ => println!(""),
             }
-        //         println!("{} ", *(row.offset(i as isize) as *mut i64));
-
         }
     }
 }
