@@ -6,4 +6,8 @@ fn main(){
         eprintln!("Can't create Subscriber: {}", err);
         process::exit(1)
     });
+
+    while (true) {
+        tde.consume();
+    }
 }

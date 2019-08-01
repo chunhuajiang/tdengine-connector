@@ -1,8 +1,18 @@
+#[path = "bindings.rs"]
+mod bindings;
+use bindings::*;
+
 use std::os::raw::c_void;
 use std::os::raw::c_char;
 use std::os::raw::c_int;
 use std::ffi::CString;
 use std::ffi::CStr;
+
+use std::mem;
+
+extern crate c_vec;
+
+use c_vec::{CVec, CSlice};
 
 pub enum Field {
     tinyInt(i8),
@@ -17,7 +27,7 @@ pub enum Field {
 }
 
 type Fields = Vec<Field>;
-type Row = Vec<Fields>;
+pub type Row = Vec<Fields>;
 
 pub fn str_into_raw(s: &str) -> *mut c_char {
     if s.is_empty() {
@@ -30,22 +40,3 @@ pub fn str_into_raw(s: &str) -> *mut c_char {
 pub fn raw_into_str<'a>(raw: *mut c_char) -> &'static str {
     unsafe {CStr::from_ptr(raw).to_str().unwrap()}
 }
-
-pub fn raw_into_field(taosFields: *mut c_char, fcount: c_int)/* -> Fields */{
-    let mut fields: Vec<Field>= Vec::new();
-    let mut rawField: taosField= taosFields;
-
-    let i = 1;
-    loop {
-        if (i > fcount) {
-            break;
-        }
-
-
-
-    }
-}
-
-// pub fn raw_into_row(raw: *mut c_char, int ) -> Row {
-    
-// }
