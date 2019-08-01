@@ -7,7 +7,7 @@ fn main(){
         process::exit(1)
     });
 
-    while (true) {
+    loop {
         tde.consume();
     }
 }
